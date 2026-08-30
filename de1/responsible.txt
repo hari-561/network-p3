@@ -1,0 +1,32 @@
+5. Responsibility of Each Component
+
+The requirement says one sentence each, with no overlap, so let's make these very precise.
+
+Spark
+
+Spark performs distributed data transformation, cleaning, aggregation, enrichment, and large-scale analytical processing.
+
+SQL
+
+SQL provides structured storage and querying of curated analytical and dimensional data for reporting and downstream access.
+
+Airflow
+
+Airflow orchestrates pipeline tasks, dependencies, scheduling, retries, and execution order.
+
+FastAPI
+
+FastAPI exposes approved analytics and ML results through application APIs.
+
+React
+
+React presents API results as an interactive dashboard for end users.
+
+ML
+
+ML generates predictive risk scores from the prepared analytical features.
+
+Claude
+
+Claude provides natural-language interpretation and question answering over approved analytics and metadata.
+

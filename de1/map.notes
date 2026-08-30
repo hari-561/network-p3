@@ -1,0 +1,12 @@
+| Layer            | Data                           | Format                                 | Main Tool            | Purpose                               |
+| ---------------- | ------------------------------ | -------------------------------------- | -------------------- | ------------------------------------- |
+| **Landing**      | Incoming daily CSV             | CSV                                    | Airflow / filesystem | Capture newly arrived files unchanged |
+| **Raw**          | Validated source records       | CSV                                    | Airflow + Python     | Preserve accepted source data         |
+| **Rejected**     | Invalid files/records          | CSV + error metadata                   | Airflow/Python       | Isolate bad input                     |
+| **Reference**    | `milano-grid.geojson`          | GeoJSON                                | Spark/Python         | Static grid boundaries/reference      |
+| **Processed**    | Cleaned + transformed activity | Parquet                                | **Spark**            | Efficient analytical storage          |
+| **Analytics**    | Aggregated/derived datasets    | SQL tables / Parquet where appropriate | **Spark + SQL**      | Reporting and serving                 |
+| **API**          | Consumer-facing results        | JSON                                   | **FastAPI**          | Expose analytics/model results        |
+| **Presentation** | Dashboard                      | React                                  | **React**            | Visualize results                     |
+
+

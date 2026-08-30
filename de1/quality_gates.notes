@@ -1,0 +1,87 @@
+3. Quality Gates
+
+We should have two major gates.
+
+Gate 1 — Before Raw Acceptance
+
+The purpose is:
+
+"Is this file structurally trustworthy enough to enter the raw zone?"
+
+File-level checks
+File exists and is readable
+Filename follows expected pattern
+Required columns exist
+No unexpected critical schema changes
+CSV can be parsed
+Timestamp column can be parsed
+Expected date matches filename
+Expected hourly cadence exists
+Expected number of distinct timestamps = 24
+No duplicate records at the expected source grain
+
+If any critical check fails:
+
+Landing
+   │
+   ├── PASS ──► Raw
+   │
+   └── FAIL ──► Rejected
+
+
+
+
+Gate 2 — Before Analytics Publication
+
+Now we're asking:
+
+"Is the processed dataset trustworthy enough for consumers?"
+
+Checks should include:
+
+Completeness
+Expected date is present
+Expected hourly intervals exist
+Required grids are represented appropriately
+Data validity
+grid_id is valid
+activity measures are numeric
+no unexpected negative activity
+no critical nulls
+timestamps are valid
+
+
+Aggregation correctness
+
+Verify that:
+
+raw records
+    ↓
+country aggregation
+    ↓
+grid + hour aggregation
+
+produces the expected grain:
+
+(grid_id, timestamp)
+
+
+Analytical checks
+Daily totals are non-negative
+Baselines are computable
+Alert calculations have valid denominators
+Risk scores are within expected bounds
+No duplicate (grid_id, timestamp) rows
+
+Only after these checks:
+
+Processed
+    │
+    ▼
+Quality Gate
+    │
+    ├── PASS ──► Analytics Published
+    │
+    └── FAIL ──► Do NOT publish
+
+This is important: bad processed data should not overwrite trusted analytics.

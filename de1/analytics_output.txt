@@ -1,0 +1,74 @@
+4. Analytics Outputs
+
+A. hourly_grid_summary
+
+Grain:
+
+one row = one grid_id + one hourly timestamp
+
+B. daily_grid_summary
+
+Grain:
+
+one row = one grid_id + one day
+
+Potential fields:
+
+grid_id
+date
+daily_total_activity
+daily_avg_activity
+daily_max_activity
+daily_min_activity
+
+
+C. hotspots
+
+Identifies grids showing unusually high activity relative to their expected baseline.
+
+Potential fields:
+
+grid_id
+timestamp
+total_activity
+baseline_activity
+activity_ratio
+hotspot_score
+hotspot_flag
+
+Important:
+
+A hotspot means unusually high activity, not confirmed network congestion.
+
+We don't have network utilization, throughput, latency, packet loss, etc., so we must not call it a confirmed congestion event.
+
+
+D. activity_alerts
+
+Contains detected activity anomalies.
+
+Potential fields:
+
+alert_id
+grid_id
+timestamp
+activity
+baseline
+ratio
+alert_level
+created_at
+
+E. risk_scores
+
+This is the ML/derived risk output.
+
+Potential fields:
+
+grid_id
+timestamp
+risk_score
+risk_level
+model_version
+scored_at
+
+

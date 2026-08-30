@@ -1,0 +1,75 @@
+                         ┌─────────────────────────┐
+                         │ Daily Activity CSV      │
+                         │ sms-call-internet-      │
+                         │ mi-YYYY-MM-DD.csv       │
+                         └────────────┬────────────┘
+                                      │
+                                      ▼
+                         ┌─────────────────────────┐
+                         │     LANDING LAYER       │
+                         │     Raw CSV arrival     │
+                         └────────────┬────────────┘
+                                      │
+                              Airflow validates
+                                      │
+                         ┌────────────┴────────────┐
+                         │                         │
+                    VALID FILE               INVALID FILE
+                         │                         │
+                         ▼                         ▼
+                ┌─────────────────┐       ┌─────────────────┐
+                │   RAW LAYER     │       │ REJECTED /      │
+                │     CSV         │       │ QUARANTINE      │
+                └────────┬────────┘       └─────────────────┘
+                         │
+                         │ Spark
+                         ▼
+                ┌──────────────────────┐
+                │ PROCESSED LAYER      │
+                │ Parquet              │
+                │ hourly/grid datasets │
+                └──────────┬───────────┘
+                           │
+                    Spark transformations
+                           │
+                           ▼
+              ┌──────────────────────────┐
+              │ ANALYTICS / WAREHOUSE    │
+              │                          │
+              │ hourly_grid_summary      │
+              │ daily_grid_summary       │
+              │ hotspots                 │
+              │ activity_alerts          │
+              │ risk_scores              │
+              └────────────┬─────────────┘
+                           │
+                    SQL / FastAPI
+                           │
+                           ▼
+                  ┌─────────────────┐
+                  │    FastAPI      │
+                  │ API layer       │
+                  └────────┬────────┘
+                           │
+                           ▼
+                     ┌───────────┐
+                     │  React    │
+                     │ Dashboard │
+                     └───────────┘
+
+
+   STATIC REFERENCE DATA
+   ─────────────────────────────────────────
+
+              ┌──────────────────────────┐
+              │ milano-grid.geojson      │
+              │ Static grid boundaries   │
+              └────────────┬─────────────┘
+                           │
+                           ▼
+                    REFERENCE LAYER
+                           │
+                           │ Spark / spatial
+                           │ enrichment
+                           ▼
+                  Processed / Analytics

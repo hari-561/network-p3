@@ -1,0 +1,15 @@
+filename,status,row_count,reason,processed_at
+sms-call-internet-mi-2013-11-01.csv,ACCEPTED,1891928,All validation checks passed,2026-08-28T15:09:28
+sms-call-internet-mi-2013-11-02.csv,ACCEPTED,1847331,All validation checks passed,2026-08-28T15:09:30
+sms-call-internet-mi-2013-11-03.csv,ACCEPTED,1828063,All validation checks passed,2026-08-28T15:09:32
+sms-call-internet-mi-2013-11-04.csv,ACCEPTED,2299544,All validation checks passed,2026-08-28T15:09:36
+sms-call-internet-mi-2013-11-05.csv,ACCEPTED,2397759,All validation checks passed,2026-08-28T15:09:38
+sms-call-internet-mi-2013-11-06.csv,ACCEPTED,2417156,All validation checks passed,2026-08-28T15:09:40
+sms-call-internet-mi-2013-11-07.csv,ACCEPTED,2407384,All validation checks passed,2026-08-28T15:09:42
+sms-call-internet-mi-2013-11-01.csv,ACCEPTED,1891928,All validation checks passed,2026-08-30T13:18:59
+sms-call-internet-mi-2013-11-02.csv,ACCEPTED,1847331,All validation checks passed,2026-08-30T13:19:01
+sms-call-internet-mi-2013-11-03.csv,ACCEPTED,1828063,All validation checks passed,2026-08-30T13:19:03
+sms-call-internet-mi-2013-11-04.csv,ACCEPTED,2299544,All validation checks passed,2026-08-30T13:19:04
+sms-call-internet-mi-2013-11-05.csv,ACCEPTED,2397759,All validation checks passed,2026-08-30T13:19:07
+sms-call-internet-mi-2013-11-06.csv,ACCEPTED,2417156,All validation checks passed,2026-08-30T13:19:09
+sms-call-internet-mi-2013-11-07.csv,ACCEPTED,2407384,All validation checks passed,2026-08-30T13:19:11
