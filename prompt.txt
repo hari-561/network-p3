@@ -1,0 +1,834 @@
+You are working on my existing Telecom Network Analytics frontend project.
+
+IMPORTANT:
+This is an existing working application. DO NOT redesign or rewrite the existing application from scratch.
+
+The current frontend is a React + Vite application with:
+- React
+- React Router
+- Lucide icons
+- Recharts
+- Leaflet / React-Leaflet
+- FastAPI backend
+- Existing REST APIs
+- Existing ML3 predictive risk API
+
+The current application already has working pages for:
+
+1. Network Overview
+2. Grid Explorer
+3. Hotspots
+4. Alerts
+5. Predictive Risk
+
+The existing UI is intentionally designed as a professional NOC / Network Operations dashboard.
+
+Your job is to add the remaining product enhancements listed below while preserving all existing functionality.
+
+==================================================
+CORE RULES
+==================================================
+
+1. DO NOT rewrite the existing frontend architecture unnecessarily.
+
+2. DO NOT replace working pages with completely different designs.
+
+3. DO NOT remove existing functionality.
+
+4. DO NOT invent backend endpoints.
+
+5. Before implementing anything, inspect:
+   - existing React pages
+   - services/api.js
+   - routing
+   - existing CSS
+   - FastAPI routes
+   - backend service implementations
+   - existing database/API response structures
+
+6. Reuse existing APIs whenever possible.
+
+7. If a required capability does not currently exist in the backend, clearly identify the missing backend capability before changing anything.
+
+8. Do not create fake data, mock data, placeholder metrics, or simulated API responses.
+
+9. Do not silently assume that two backend fields mean the same thing.
+
+10. Keep frontend and backend terminology consistent with the existing project.
+
+11. Preserve existing reporting timestamps returned by the backend.
+Do not replace them with browser/system clock values.
+
+12. Preserve existing loading, success, empty, and error states.
+
+13. Keep the UI professional and client-facing.
+This is a Network Operations Center application, not a developer/API testing interface.
+
+14. Avoid adding unnecessary charts.
+Every visualization must answer a real operational question.
+
+15. Prefer one or two strong workflows over many small UI features.
+
+16. Keep components maintainable and reusable.
+
+17. Do not introduce a generic AI chatbot UI.
+Claude will eventually be used as a NOC Copilot, not as a generic conversational assistant.
+
+18. Do not modify working ML logic or feature engineering unless absolutely necessary.
+Feature computation belongs upstream.
+
+19. Before making changes, understand the existing implementation and explain your plan.
+
+==================================================
+CURRENT WORKING FEATURES
+==================================================
+
+The current application includes:
+
+------------------------------------------
+NETWORK OVERVIEW
+------------------------------------------
+
+The Overview page consumes:
+
+GET /network/summary
+
+It provides:
+- total network activity
+- peak activity time
+- active grids
+- highest activity grid
+- reporting timestamp
+
+------------------------------------------
+GRID EXPLORER
+------------------------------------------
+
+Grid Explorer uses:
+
+GET /network/grid/{grid_id}
+
+It displays:
+- grid identity
+- activity metrics
+- calls
+- SMS
+- internet activity
+- total activity
+- hourly trend
+- activity details
+
+The existing chart is a multi-series line chart.
+
+DO NOT replace this with a basic bar chart.
+
+------------------------------------------
+HOTSPOTS
+------------------------------------------
+
+Hotspots uses:
+
+GET /network/hotspots
+
+The page displays ranked high-activity grids.
+
+The existing Hotspots page has:
+- SHOW limit
+- independently scrollable list
+- reporting timestamp
+- severity/status display
+- Milan GeoJSON map
+- map legend
+- grid selection
+- hover interaction
+- tooltip
+
+------------------------------------------
+ALERTS
+------------------------------------------
+
+Alerts uses:
+
+GET /network/alerts
+
+Alert records contain fields such as:
+
+- grid_id
+- timestamp
+- alert_type
+- severity
+- current_activity
+- baseline_activity
+- reason
+
+Alert types include:
+
+- HIGH_ACTIVITY
+- ACTIVITY_SPIKE
+- ACTIVITY_DROP
+
+Severity is derived from the alert classification.
+
+Therefore DO NOT add separate Severity and Alert Type filters when Alert Type already determines the severity behavior.
+
+The Alerts page currently has:
+- Alert Type filter
+- scrollable alert list
+- alert counts based on returned data
+- reporting timestamp
+- Milan network map
+- grey grid context
+- highlighted alert grids
+- HIGH / ATTENTION visualization
+- tooltip
+- grid selection
+
+The map joins API grid IDs to GeoJSON using:
+
+GeoJSON:
+properties.cellId
+
+API:
+grid_id
+
+Do not change this mapping.
+
+------------------------------------------
+PREDICTIVE RISK
+------------------------------------------
+
+Risk uses:
+
+GET /network/grid/{grid_id}/features
+
+and:
+
+GET /network/grid/{grid_id}
+
+and:
+
+POST /network/predict-risk
+
+The ML3 request includes:
+
+- grid_id
+- feature_timestamp
+- avg_activity
+- activity_growth
+- peak_ratio
+- variability
+- internet_share
+- trailing_median_24h
+- hour_of_day
+- day_of_week
+
+The prediction response contains:
+
+- grid_id
+- feature_timestamp
+- risk_score
+- risk_level
+- model_version
+- explanation_note
+
+The existing Risk UI intentionally separates:
+
+MODEL OUTPUT
+
+from:
+
+OPERATIONAL INTERPRETATION
+
+The prediction is an operational risk signal and does NOT confirm network congestion or a network fault.
+
+Preserve this distinction.
+
+==================================================
+REMAINING PRODUCT ENHANCEMENTS
+==================================================
+
+Now implement the following five enhancements.
+
+==================================================
+1. ALERT INVESTIGATION / ALERT DETAIL
+==================================================
+
+Purpose:
+
+Turn an alert from a simple row into an operational investigation workflow.
+
+An operator should be able to select an alert and answer:
+
+"What happened here?"
+
+The investigation should provide:
+
+- alert type
+- severity
+- grid ID
+- alert timestamp
+- current activity
+- baseline activity
+- alert reason
+- relevant recent activity
+- comparison against baseline
+- relevant grid context
+- relationship to nearby/relevant operational signals if supported
+- connection to Predictive Risk if appropriate
+
+Example workflow:
+
+Alerts
+  ↓
+Select alert
+  ↓
+Alert Investigation
+  ↓
+Grid + timestamp + alert condition
+  ↓
+Activity evidence
+  ↓
+Baseline comparison
+  ↓
+Potential risk context
+
+Do NOT simply create a modal containing the same alert fields.
+
+The Alert Detail page should provide additional evidence useful to an operator.
+
+Possible route:
+
+/alerts/:gridId/:timestamp
+
+or another route consistent with the existing routing architecture.
+
+Choose the route based on the existing project structure.
+
+Do not invent backend data.
+
+If the existing APIs are sufficient, reuse them.
+
+If additional backend information is required, identify the exact missing capability first.
+
+==================================================
+2. PIPELINE HEALTH / DATA OPERATIONS
+==================================================
+
+Purpose:
+
+A NOC operator must know whether the data being displayed is healthy and trustworthy.
+
+Create a small operational page or section for:
+
+Pipeline Health / Data Operations
+
+It should answer questions such as:
+
+- Is the API available?
+- Is network data available?
+- How fresh is the data?
+- What is the latest reporting timestamp?
+- Are required datasets available?
+- Is the feature data current?
+- Are there obvious data-quality problems?
+- Is the predictive pipeline usable?
+
+Reuse existing backend metadata where available.
+
+For example, the existing feature endpoint already exposes concepts such as:
+
+- data_quality
+- feature_freshness
+
+Do not invent a new health score unless the backend actually supports the necessary evidence.
+
+The UI should distinguish:
+
+HEALTHY
+ATTENTION
+UNAVAILABLE
+
+Use clear operational language.
+
+This page should be useful to a NOC operator, not a developer.
+
+Possible route:
+
+/pipeline
+
+or:
+
+/pipeline/status
+
+Choose the cleaner architecture after inspecting the existing application.
+
+==================================================
+3. COMPARE MODE
+==================================================
+
+Purpose:
+
+Allow an operator to compare network behavior.
+
+The primary use case should be:
+
+Grid A vs Grid B
+
+For example:
+
+Grid 100
+vs
+Grid 200
+
+Compare meaningful existing metrics such as:
+
+- total activity
+- calls
+- SMS
+- internet activity
+- peak activity
+- average activity
+- activity pattern
+
+Reuse Grid Explorer's existing API and charting logic where possible.
+
+Do not duplicate the entire Grid Explorer page.
+
+Create a focused comparison workflow.
+
+Possible route:
+
+/compare
+
+The UI should make the comparison immediately understandable.
+
+Example:
+
+GRID 100              GRID 200
+-------------------------------
+Avg activity          Avg activity
+Peak                  Peak
+Calls                 Calls
+SMS                   SMS
+Internet              Internet
+
+Then provide one useful comparative visualization.
+
+Do not add multiple unnecessary charts.
+
+If the existing backend cannot provide the requested comparison without excessive client-side processing, explain that before implementation.
+
+==================================================
+4. HISTORICAL TREND / DATE COMPARISON
+==================================================
+
+Purpose:
+
+Allow an operator to understand whether a network condition is isolated or persistent.
+
+Example question:
+
+"Was Grid 5061 also unusually active yesterday?"
+
+The existing Grid Explorer already supports historical activity queries.
+
+Use the existing:
+
+GET /network/grid/{grid_id}
+
+capabilities where possible.
+
+The workflow should support something like:
+
+Grid:
+5061
+
+Date A:
+Nov 6
+
+Date B:
+Nov 7
+
+Then compare:
+
+- total activity
+- hourly activity
+- calls
+- SMS
+- internet
+- peak hour
+
+The visualization should clearly show the two dates.
+
+Avoid clutter.
+
+A clean comparison line chart is preferred if it improves operational interpretation.
+
+The feature should answer:
+
+"Is this abnormality new, recurring, or persistent?"
+
+Do not fabricate historical values.
+
+==================================================
+5. RISK → EVIDENCE CONNECTION
+==================================================
+
+Purpose:
+
+Connect the ML3 predictive risk output to the actual network evidence.
+
+Current Risk already gives:
+
+- risk score
+- risk level
+- grid
+- prediction timestamp
+- model version
+- explanation note
+
+Enhance the workflow so an operator can move from:
+
+RISK RESULT
+
+to:
+
+WHY SHOULD I CARE?
+
+to:
+
+WHAT EVIDENCE SUPPORTS INVESTIGATING THIS GRID?
+
+Potential evidence:
+
+- recent total activity
+- trailing activity baseline
+- activity growth
+- peak ratio
+- variability
+- internet share
+- recent hourly activity
+- historical comparison
+- related alert if one exists
+
+IMPORTANT:
+
+Do NOT claim that these features are causal explanations of the model prediction unless the backend/model actually provides explainability information.
+
+Instead use language such as:
+
+"Supporting network evidence"
+
+"Relevant indicators"
+
+"Recent activity context"
+
+"Model inputs"
+
+"Operational context"
+
+The system must preserve the distinction between:
+
+MODEL PREDICTION
+
+and:
+
+NETWORK EVIDENCE
+
+The Risk page should never imply:
+
+"The model predicted HIGH because X definitely caused it."
+
+unless the backend actually provides such causal/explanation information.
+
+==================================================
+HOW THESE FEATURES SHOULD CONNECT
+==================================================
+
+The final frontend should feel like one coherent NOC product.
+
+The intended workflow is:
+
+                 NETWORK OVERVIEW
+                       |
+          +------------+-------------+
+          |                          |
+       HOTSPOTS                   ALERTS
+          |                          |
+          |                    Alert Investigation
+          |                          |
+          +------------+-------------+
+                       |
+                  GRID EXPLORER
+                       |
+             +---------+---------+
+             |                   |
+        Historical            Compare
+        Trend                  Mode
+             |
+             |
+        Predictive Risk
+             |
+       Risk → Evidence
+             |
+       Operational Context
+
+
+Separately:
+
+Pipeline Health / Data Operations
+       |
+       +---- data freshness
+       +---- API health
+       +---- feature freshness
+       +---- data quality
+       +---- model readiness if supported
+
+==================================================
+IMPORTANT PRODUCT PRINCIPLE
+==================================================
+
+Do not implement these as five disconnected pages.
+
+They should form a coherent investigation workflow.
+
+Example:
+
+Operator sees:
+
+Grid 5061
+HIGH_ACTIVITY
+HIGH
+
+↓
+
+clicks the alert
+
+↓
+
+Alert Investigation
+
+↓
+
+sees:
+- current activity
+- baseline
+- reason
+- recent activity
+
+↓
+
+clicks:
+"View Grid"
+
+↓
+
+Grid Explorer
+
+↓
+
+sees historical activity
+
+↓
+
+clicks:
+"Compare"
+
+↓
+
+compares Grid 5061 with another grid
+
+↓
+
+opens:
+"Predictive Risk"
+
+↓
+
+gets ML3 risk score
+
+↓
+
+clicks:
+"View Evidence"
+
+↓
+
+sees:
+- model inputs
+- recent activity
+- baseline
+- historical context
+- related alerts if available
+
+This is the kind of workflow I want.
+
+==================================================
+UI / UX REQUIREMENTS
+==================================================
+
+Maintain the existing visual language:
+
+- dark NOC interface
+- restrained green accent
+- professional typography
+- compact operational cards
+- clear hierarchy
+- meaningful status badges
+- controlled spacing
+- no unnecessary decoration
+
+Do not make the interface look like a generic SaaS dashboard.
+
+Do not add:
+- random charts
+- fake KPIs
+- unnecessary animations
+- generic chat windows
+- excessive gradients
+- decorative components without operational value
+
+Keep the existing Hotspots and Alerts visual style consistent.
+
+Keep the existing Milan map behavior.
+
+Keep the existing Grid Explorer chart style.
+
+Keep the existing Risk output style.
+
+==================================================
+IMPLEMENTATION PROCESS
+==================================================
+
+Before coding:
+
+STEP 1:
+Inspect the complete frontend project.
+
+STEP 2:
+Inspect the backend routes/services relevant to:
+- alerts
+- hotspots
+- grid activity
+- grid features
+- risk
+- pipeline/data freshness
+
+STEP 3:
+Map each proposed feature to existing APIs.
+
+STEP 4:
+Identify exactly what can be implemented using existing APIs.
+
+STEP 5:
+Identify any missing backend capability.
+
+STEP 6:
+Do not invent endpoints.
+
+STEP 7:
+Propose the implementation architecture.
+
+Then implement incrementally.
+
+For each feature:
+
+1. Explain what will change.
+2. List files that will be changed.
+3. Implement the feature.
+4. Preserve existing functionality.
+5. Run/build the frontend.
+6. Fix compile/runtime errors.
+7. Verify the API requests.
+8. Verify loading/error/empty states.
+9. Verify navigation.
+10. Verify that existing pages still work.
+
+==================================================
+CRITICAL SAFETY AGAINST REGRESSIONS
+==================================================
+
+The current frontend is already working.
+
+Therefore:
+
+DO NOT:
+- rewrite App.jsx unnecessarily
+- rewrite services/api.js unnecessarily
+- rewrite existing pages unnecessarily
+- change existing API contracts
+- change ML feature computation
+- change alert generation rules
+- change GeoJSON grid mapping
+- replace working components merely for stylistic reasons
+
+If a reusable component is useful, refactor carefully.
+
+Prefer small, controlled changes.
+
+==================================================
+CLAUDE / FUTURE AI INTEGRATION
+==================================================
+
+There is a later Claude phase.
+
+Do not implement Claude yet unless explicitly requested.
+
+However, design the frontend so that Claude can eventually receive structured context from:
+
+- selected alert
+- grid
+- timestamp
+- current activity
+- baseline
+- recent activity
+- historical comparison
+- risk result
+- model version
+- supporting evidence
+- pipeline/data freshness
+
+The future Claude capability should behave as a:
+
+NOC Copilot
+
+not:
+
+a generic chatbot.
+
+Potential future actions include:
+
+"Explain this alert"
+
+"Why is this grid risky?"
+
+"What evidence supports this?"
+
+"Compare this grid with another grid"
+
+"Summarize what happened"
+
+"Is this condition persistent?"
+
+But leave actual Claude integration for the later phase.
+
+==================================================
+DELIVERABLE
+==================================================
+
+At the end, provide:
+
+1. Final architecture
+2. New files
+3. Modified files
+4. New routes
+5. Existing APIs reused
+6. Any new backend endpoints required
+7. Any backend changes required
+8. Testing performed
+9. Potential limitations
+10. Recommended implementation order
+
+Do not implement everything blindly in one massive change.
+
+Start by inspecting the existing project and producing the implementation plan for these five enhancements.
